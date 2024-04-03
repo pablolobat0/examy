@@ -1,6 +1,15 @@
 import { Router } from "express";
 import { ExamsController } from "../controllers/exams.js";
 
-export const examsRouter = Router();
+export const createExamsRouter = ({ examModel, subjectModel }) => {
+  const examsRouter = Router();
 
-examsRouter.post("/", ExamsController.create);
+  const examsController = new ExamsController({
+    examModel: examModel,
+    subjectModel: subjectModel,
+  });
+
+  examsRouter.post("/", examsController.create);
+
+  return examsRouter;
+};

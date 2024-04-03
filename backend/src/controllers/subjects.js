@@ -1,21 +1,22 @@
-import Subject from "../models/Subject.js";
-
 export class SubjectsController {
-  static async create(req, res) {
+  constructor({ subjectModel }) {
+    this.subjectModel = subjectModel;
+  }
+  create = async (req, res) => {
     try {
       const { name } = req.body;
 
-      const newSubject = await Subject.create({ name });
+      const newSubject = await this.subjectModel.create({ name });
       res.status(201).json(newSubject);
     } catch (error) {
       console.error(error);
       res.status(500);
     }
-  }
+  };
 
-  static async getAllSubjects(req, res) {
+  getAllSubjects = async (req, res) => {
     try {
-      const subjects = await Subject.findAll();
+      const subjects = await this.subjectModel.findAll();
       res.status(200).json(subjects);
     } catch (error) {
       console.error(error);
@@ -23,5 +24,5 @@ export class SubjectsController {
         .status(500)
         .json({ error: "Ocurrió un error al obtener las asignaturas" });
     }
-  }
+  };
 }

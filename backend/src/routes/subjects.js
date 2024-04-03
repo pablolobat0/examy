@@ -1,7 +1,15 @@
 import { Router } from "express";
 import { SubjectsController } from "../controllers/subjects.js";
 
-export const subjectsRouter = Router();
+export const createSubjectsRouter = ({ subjectModel }) => {
+  const subjectsRouter = Router();
 
-subjectsRouter.post("/", SubjectsController.create);
-subjectsRouter.get("/", SubjectsController.getAllSubjects);
+  const subjectsController = new SubjectsController({
+    subjectModel: subjectModel,
+  });
+
+  subjectsRouter.post("/", subjectsController.create);
+  subjectsRouter.get("/", subjectsController.getAllSubjects);
+
+  return subjectsRouter;
+};

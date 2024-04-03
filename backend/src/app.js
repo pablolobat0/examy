@@ -1,21 +1,26 @@
 import express from "express";
 import cors from "cors";
 
-import { subjectsRouter } from "./routes/subjects.js";
-import { examsRouter } from "./routes/exams.js";
+import { createSubjectsRouter } from "./routes/subjects.js";
+import { createExamsRouter } from "./routes/exams.js";
 
-const app = express();
-app.use(cors());
+export const createApp = ({ subjectModel, examModel }) => {
+  const app = express();
+  app.use(cors());
 
-app.use(express.json());
+  app.use(express.json());
 
-app.disable("x-powered-by");
+  app.disable("x-powered-by");
 
-const PORT = process.env.PORT ?? 8000;
+  const PORT = process.env.PORT ?? 8000;
 
-app.use("/subjects", subjectsRouter);
-app.use("/exams", examsRouter);
+  app.use("/subjects", createSubjectsRouter({ subjectModel: subjectModel }));
+  app.use(
+    "/exams",
+    createExamsRouter({ examModel: examModel, subjectModel: subjectModel }),
+  );
 
-app.listen(PORT, () => {
-  console.log(`Server listening on http://localhost:${PORT}`);
-});
+  app.listen(PORT, () => {
+    console.log(`Server listening on http://localhost:${PORT}`);
+  });
+};
