@@ -10,6 +10,6 @@ export const createSubjectsRouter = ({ subjectModel }) => {
 
   subjectsRouter.post("/", subjectsController.create);
   subjectsRouter.get("/", subjectsController.getAllSubjects);
-
+  subjectsRouter.delete("/:id", subjectsController.deleteSubject);
   return subjectsRouter;
 };

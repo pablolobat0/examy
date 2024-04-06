@@ -25,4 +25,21 @@ export class SubjectsController {
         .json({ error: "Ocurrió un error al obtener las asignaturas" });
     }
   };
+  deleteSubject = async (req, res) => {
+    try {
+      const subjectId = parseInt(req.params.id);
+      const subject = await this.subjectModel.findByPk(subjectId);
+      if (subject) {
+        await subject.destroy();
+        res.status(200).json({ message: "Asignatura borrada con éxito" });
+      } else {
+        res.status(404).json({ error: "La asignatura no existe" });
+      }
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "Ocurrió un error al obtener las asignaturas" });
+    }
+  };
 }
