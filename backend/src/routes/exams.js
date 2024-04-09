@@ -10,6 +10,7 @@ export const createExamsRouter = ({ examModel, subjectModel }) => {
   });
 
   examsRouter.post("/", examsController.create);
+  examsRouter.get("/:subjectId", examsController.getExamsBySubjectId);
 
   return examsRouter;
 };

@@ -47,14 +47,18 @@ export default class View {
   };
   createSubject = async (subject) => {
     const containerRow = document.querySelector(".row");
-    const card = new Card(subject.id, subject.name);
+    const card = new Card(
+      subject.id,
+      subject.name,
+      `show_exams.html?subjectId=${subject.id}`,
+    );
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete";
     deleteButton.classList.add("btn", "btn-danger");
     deleteButton.onclick = () => {
       this.deleteSubject(subject);
     };
-    card.element.querySelector(".card-body").appendChild(deleteButton);
+    card.element.querySelector(".card").appendChild(deleteButton);
 
     const editButton = document.createElement("button");
     editButton.innerText = "Edit";
@@ -81,7 +85,7 @@ export default class View {
         console.error(error);
       }
     };
-    card.element.querySelector(".card-body").appendChild(editButton);
+    card.element.querySelector(".card").appendChild(editButton);
 
     containerRow.appendChild(card.element);
   };
