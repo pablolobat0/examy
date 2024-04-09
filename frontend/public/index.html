@@ -62,8 +62,44 @@
       <div class="container">
         <div class="row"></div>
       </div>
+      <div
+        class="modal fade"
+        id="modal"
+        tabindex="-1"
+        aria-labelledby="editSubjectModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edit Subject</h5>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="subjectNameLabel" class="form-label"></label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="subjectNameInput"
+                  />
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" id="closeModal">
+                Close
+              </button>
+              <button type="button" class="btn btn-primary" id="saveModal">
+                Guardar cambios
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
     <footer></footer>
-    <script src="../src/js/show-subjects.js" type="module"></script>
+    <script src="../src/js/home/show-subjects.js" type="module"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
