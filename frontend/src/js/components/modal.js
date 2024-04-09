@@ -2,7 +2,6 @@ export default class Modal {
   constructor() {
     this.saveButton = document.getElementById("saveModal");
     this.name = document.getElementById("subjectNameInput");
-    this.originalName = null;
     this.object = null;
     this.closeButton = document.getElementById("closeModal");
     this.modal = new bootstrap.Modal(document.getElementById("modal"));
@@ -10,11 +9,9 @@ export default class Modal {
       this.modal.hide();
     };
   }
-
-  setValues(object) {
-    this.name.value = object.name;
-    this.originalName = object.name;
-    this.object = object;
+  setValues(objectData) {
+    this.object = objectData;
+    this.name.value = this.object.name;
     this.modal.show();
   }
 
@@ -23,12 +20,7 @@ export default class Modal {
       if (!this.name.value) {
         return;
       }
-      callback(this.object.id, {
-        name: this.name.value,
-        originalName: this.originalName,
-      });
-      console.log(this.object, this.name.value);
-      this.object.name = this.name.value;
+      callback(this.object.id, this.name.value);
       this.modal.hide();
     };
   }
