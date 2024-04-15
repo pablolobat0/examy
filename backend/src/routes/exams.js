@@ -10,7 +10,9 @@ export const createExamsRouter = ({ examModel, subjectModel }) => {
   });
 
   examsRouter.post("/", examsController.create);
-  examsRouter.get("/:subjectId", examsController.getExamsBySubjectId);
+  examsRouter.get("/:examId", examsController.getExam);
+  examsRouter.delete("/:examId", examsController.deleteExam);
+  examsRouter.put("/:examId", examsController.updateExam);
 
   return examsRouter;
 };

@@ -14,7 +14,10 @@ export const createApp = ({ subjectModel, examModel }) => {
 
   const PORT = process.env.PORT ?? 8000;
 
-  app.use("/subjects", createSubjectsRouter({ subjectModel: subjectModel }));
+  app.use(
+    "/subjects",
+    createSubjectsRouter({ subjectModel: subjectModel, examModel: examModel }),
+  );
   app.use(
     "/exams",
     createExamsRouter({ examModel: examModel, subjectModel: subjectModel }),

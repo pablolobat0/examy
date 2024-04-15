@@ -3,7 +3,7 @@ import Modal from "../components/modal.js";
 
 export default class View {
   constructor() {
-    this.modalEditSubject = new Modal();
+    this.modalEditSubject = new Modal("modalEditSubject");
 
     this.modalEditSubject.onClick((id, values) => this.editSubject(id, values));
   }
@@ -63,8 +63,6 @@ export default class View {
     const editButton = document.createElement("button");
     editButton.innerText = "Edit";
     editButton.classList.add("btn", "btn-primary");
-    editButton.setAttribute("data-toggle", "modal");
-    editButton.setAttribute("data-target", "#modal");
     editButton.onclick = async () => {
       try {
         const response = await fetch(

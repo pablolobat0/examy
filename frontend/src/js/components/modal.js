@@ -1,10 +1,10 @@
 export default class Modal {
-  constructor() {
+  constructor(modalName) {
     this.saveButton = document.getElementById("saveModal");
-    this.name = document.getElementById("subjectNameInput");
+    this.name = document.getElementById("nameInput");
     this.object = null;
     this.closeButton = document.getElementById("closeModal");
-    this.modal = new bootstrap.Modal(document.getElementById("modal"));
+    this.modal = new bootstrap.Modal(document.getElementById(modalName));
     this.closeButton.onclick = () => {
       this.modal.hide();
     };
