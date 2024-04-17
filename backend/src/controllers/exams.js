@@ -1,11 +1,18 @@
+import fs from "fs";
+
 export class ExamsController {
-  constructor({ examModel, subjectModel }) {
+  constructor({ examModel, subjectModel, questionModel, answerModel }) {
     this.examModel = examModel;
     this.subjectModel = subjectModel;
+    this.questionModel = questionModel;
+    this.answerModel = answerModel;
   }
+
   create = async (req, res) => {
     try {
       const { name, subjectId } = req.body;
+      const filePath = req.file.path;
+
       const subject = this.subjectModel.findByPk(subjectId);
       if (!subject) {
         return res
@@ -17,6 +24,9 @@ export class ExamsController {
         name,
         subjectId: subjectId,
       });
+
+      this.processFileData(filePath, newExam.id);
+
       res.status(201).json(newExam);
     } catch (error) {
       console.error(error);
@@ -24,6 +34,37 @@ export class ExamsController {
         .status(500)
         .json({ message: "Ha sucedido un error al crear el examen." });
     }
+  };
+
+  processFileData = async (filePath, examId) => {
+    fs.readFile(filePath, "utf8", (err, data) => {
+      if (err) {
+        console.error("Error al leer el archivo:", err);
+        return res.status(500).json({ error: "Error al leer el archivo" });
+      }
+
+      let jsonData;
+      try {
+        jsonData = JSON.parse(data);
+        jsonData.questions.forEach(async (questionData) => {
+          const question = await this.questionModel.create({
+            statement: questionData.text,
+            examId: examId,
+          });
+
+          questionData.options.forEach(async (optionData) => {
+            await this.answerModel.create({
+              text: optionData.text,
+              correct: optionData.correct,
+              questionId: question.id,
+            });
+          });
+        });
+      } catch (error) {
+        console.error("Error al parsear el archivo JSON:", error);
+        return res.status(400).json({ error: "Archivo JSON inválido" });
+      }
+    });
   };
 
   getExamsBySubjectId = async (req, res) => {

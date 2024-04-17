@@ -4,10 +4,14 @@ import cors from "cors";
 import { createSubjectsRouter } from "./routes/subjects.js";
 import { createExamsRouter } from "./routes/exams.js";
 
-export const createApp = ({ subjectModel, examModel }) => {
+export const createApp = ({
+  subjectModel,
+  examModel,
+  questionModel,
+  answerModel,
+}) => {
   const app = express();
   app.use(cors());
-
   app.use(express.json());
 
   app.disable("x-powered-by");
@@ -20,7 +24,12 @@ export const createApp = ({ subjectModel, examModel }) => {
   );
   app.use(
     "/exams",
-    createExamsRouter({ examModel: examModel, subjectModel: subjectModel }),
+    createExamsRouter({
+      examModel: examModel,
+      subjectModel: subjectModel,
+      questionModel: questionModel,
+      answerModel: answerModel,
+    }),
   );
 
   app.listen(PORT, () => {

@@ -18,15 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const select = document.getElementById("selectSubject");
     const formData = new FormData(form); // Crear objeto FormData con los datos del formulario
     // Convertir FormData a un objeto JSON
-    const name = formData.get("examName");
-    const subjectId = select.value;
-    console.log(name, subjectId);
+    formData.append("name", form.elements.examName.value);
+    formData.append("subjectId", select.value);
+    formData.append("file", form.elements.fileInput.files[0]);
     fetch("http://localhost:8000/exams", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, subjectId }),
+      body: formData,
     })
       .then((response) => {
         if (response.ok) {
