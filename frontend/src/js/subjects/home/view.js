@@ -1,5 +1,5 @@
-import Card from "../components/card.js";
-import Modal from "../components/modal.js";
+import Card from "../../components/card.js";
+import Modal from "../../components/modal.js";
 
 export default class View {
   constructor() {
@@ -50,7 +50,7 @@ export default class View {
     const card = new Card(
       subject.id,
       subject.name,
-      `show_exams.html?subjectId=${subject.id}`,
+      `show_subject_exams.html?subjectId=${subject.id}`,
     );
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete";

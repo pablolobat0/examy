@@ -1,5 +1,5 @@
-import Card from "./components/card.js";
-import Modal from "./components/modal.js";
+import Card from "../components/card.js";
+import Modal from "../components/modal.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const urlParams = new URLSearchParams(window.location.search);
