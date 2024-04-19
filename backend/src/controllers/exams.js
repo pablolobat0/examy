@@ -149,4 +149,28 @@ export class ExamsController {
         .json({ message: "Ha sucedido un error al actualizar el examen." });
     }
   };
+
+  getExamQuestions = async (req, res) => {
+    try {
+      const examId = parseInt(req.params.examId);
+      const exam = await this.examModel.findByPk(examId);
+      if (!exam) {
+        return res
+          .status(404)
+          .json({ error: "El examen especificado no existe." });
+      }
+      const questions = await this.questionModel.findAll({
+        where: {
+          examId: examId,
+        },
+      });
+      console.log(questions);
+      res.status(200).json(questions);
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ message: "Ha sucedido un error al buscar las preguntas" });
+    }
+  };
 }

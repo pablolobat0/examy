@@ -26,7 +26,6 @@ const Answer = sequelize.define("answer", {
   },
 });
 
-// Establece la relación entre Question y Subject
 Answer.belongsTo(Question, { foreignKey: "questionId" });
 
 export default Answer;

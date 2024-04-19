@@ -22,7 +22,6 @@ const Question = sequelize.define("question", {
   },
 });
 
-// Establece la relación entre Exam y Subject
 Question.belongsTo(Exam, { foreignKey: "examId" });
 
 export default Question;

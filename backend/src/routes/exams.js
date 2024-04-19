@@ -23,6 +23,7 @@ export const createExamsRouter = ({
   examsRouter.get("/:examId", examsController.getExam);
   examsRouter.delete("/:examId", examsController.deleteExam);
   examsRouter.put("/:examId", examsController.updateExam);
+  examsRouter.get("/:examId/questions", examsController.getExamQuestions);
 
   return examsRouter;
 };

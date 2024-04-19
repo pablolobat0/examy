@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test App: Exam</title>
+
+    <meta
+      name="description"
+      content="Página que muestra el contenido de un examen"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#3A3430" />
+
+    <link
+      href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Test App</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item" aria-current="page">
+                <a class="nav-link" href="./index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./create_subject.html"
+                  >Crear Asignatura</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./create_exam.html">Crear Examen</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Empezar Examen</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <h1 class="text-center">Exam</h1>
+      <div class="container">
+        <div class="row"></div>
+      </div>
+    </main>
+    <footer></footer>
+    <script src="../src/js/exams/show-exam.js" type="module"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

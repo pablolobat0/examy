@@ -1,16 +1,20 @@
 import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const username = process.env.USERNAME;
 const userPassword = process.env.USER_PASSWORD;
+const dbName = process.env.DB_NAME;
 
 // Configuración de la base de datos
 const sequelize = new Sequelize({
   dialect: "postgres",
-  host: "127.0.0.1",
+  host: "database",
   port: 5432,
   username: username,
   password: userPassword,
-  database: "test_app",
+  database: dbName,
 });
 
 try {
@@ -18,10 +22,11 @@ try {
   console.log("Connection has been established successfully.");
 } catch (error) {
   console.error("Unable to connect to the database:", error);
+  process.exit(1);
 }
 
 sequelize
-  .sync({ alter: true })
+  .sync({ force: true })
   .then(() => {
     console.log("Todos los modelos se han sincronizado correctamente.");
   })

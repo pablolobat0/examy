@@ -44,7 +44,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalEditExam = new Modal("modalEditExams");
 
     modalEditExam.onClick((id, values) => editExam(id, values));
-    const card = new Card(exam.id, exam.name);
+    const card = new Card(
+      exam.id,
+      exam.name,
+      `show_exam.html?examId=${exam.id}`,
+    );
 
     const deleteButton = document.createElement("button");
     deleteButton.innerText = "Delete";

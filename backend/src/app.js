@@ -3,6 +3,7 @@ import cors from "cors";
 
 import { createSubjectsRouter } from "./routes/subjects.js";
 import { createExamsRouter } from "./routes/exams.js";
+import { createQuestionsRouter } from "./routes/questions.js";
 
 export const createApp = ({
   subjectModel,
@@ -27,6 +28,14 @@ export const createApp = ({
     createExamsRouter({
       examModel: examModel,
       subjectModel: subjectModel,
+      questionModel: questionModel,
+      answerModel: answerModel,
+    }),
+  );
+
+  app.use(
+    "/questions",
+    createQuestionsRouter({
       questionModel: questionModel,
       answerModel: answerModel,
     }),
