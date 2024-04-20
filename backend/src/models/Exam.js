@@ -11,6 +11,16 @@ const Exam = sequelize.define("exam", {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      len: {
+        args: [1, 50],
+        msg: "El nombre del examen debe tener entre 3 y 50 caracteres",
+      },
+      is: {
+        args: /^[a-zA-Z0-9_-\s]+$/,
+        msg: "El nombre del examen solo puede contener letras, números, espacios, barras bajas y guiones",
+      },
+    },
   },
   subjectId: {
     type: DataTypes.INTEGER,
