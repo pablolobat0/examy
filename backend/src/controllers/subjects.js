@@ -1,3 +1,8 @@
+import {
+  SubjectNotFoundError,
+  handleDatabaseError,
+} from "../utils/errorHandling.js";
+
 export class SubjectsController {
   constructor({ subjectModel, examModel }) {
     this.subjectModel = subjectModel;
@@ -10,8 +15,7 @@ export class SubjectsController {
       const newSubject = await this.subjectModel.create({ name });
       res.status(201).json(newSubject);
     } catch (error) {
-      console.error(error);
-      res.status(500);
+      handleDatabaseError(error, res);
     }
   };
 
@@ -20,10 +24,7 @@ export class SubjectsController {
       const subjects = await this.subjectModel.findAll();
       res.status(200).json(subjects);
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Ocurrió un error al obtener las asignaturas" });
+      handleDatabaseError(error, res);
     }
   };
 
@@ -34,13 +35,10 @@ export class SubjectsController {
       if (subject) {
         res.status(200).json(subject);
       } else {
-        res.status(404).json({ error: "La asignatura no existe" });
+        throw new SubjectNotFoundError("La asignatura especificada no existe");
       }
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Ocurrió un error al obtener las asignaturas" });
+      handleDatabaseError(error, res);
     }
   };
 
@@ -50,9 +48,7 @@ export class SubjectsController {
 
       const subject = await this.subjectModel.findByPk(subjectId);
       if (!subject) {
-        return res
-          .status(404)
-          .json({ error: "La asignatura especificada no existe." });
+        throw new SubjectNotFoundError("La asignatura especificada no existe");
       }
       const exams = await this.examModel.findAll({
         where: {
@@ -61,10 +57,7 @@ export class SubjectsController {
       });
       res.status(200).json(exams);
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "Ha sucedido un error al buscar los examenes." });
+      handleDatabaseError(error, res);
     }
   };
 
@@ -76,13 +69,10 @@ export class SubjectsController {
         await subject.destroy();
         res.status(200).json({ message: "Asignatura borrada con éxito" });
       } else {
-        res.status(404).json({ error: "La asignatura no existe" });
+        throw new SubjectNotFoundError("La asignatura especificada no existe");
       }
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Ocurrió un error al obtener las asignaturas" });
+      handleDatabaseError(error, res);
     }
   };
 
@@ -93,7 +83,7 @@ export class SubjectsController {
 
       const subject = await this.subjectModel.findByPk(subjectId);
       if (!subject) {
-        return res.status(404).json({ error: "Subject not found" });
+        throw new SubjectNotFoundError("La asignatura especificada no existe");
       }
 
       subject.name = name;
@@ -101,10 +91,7 @@ export class SubjectsController {
 
       res.status(200).json(subject);
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "Ocurrió un error al actualizar la asignatura" });
+      handleDatabaseError(error, res);
     }
   };
 }

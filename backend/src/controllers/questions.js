@@ -1,3 +1,8 @@
+import {
+  QuestionNotFoundError,
+  handleDatabaseError,
+} from "../utils/errorHandling.js";
+
 export class QuestionsController {
   constructor({ questionModel, answerModel }) {
     this.questionModel = questionModel;
@@ -9,21 +14,16 @@ export class QuestionsController {
       const questions = await this.questionModel.findAll();
       res.status(200).json(questions);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Error al obtener las preguntas" });
+      handleDatabaseError(error, res);
     }
   };
 
   getQuestionAnswers = async (req, res) => {
     try {
       const questionId = parseInt(req.params.questionId);
-      console.log(questionId);
       const question = await this.questionModel.findByPk(questionId);
-      console.log(question);
       if (!question) {
-        res
-          .status(404)
-          .json({ message: "No se ha encontrado la pregunta indicada" });
+        throw new QuestionNotFoundError("La pregunta especificada no existe");
       }
 
       const answers = await this.answerModel.findAll({
@@ -32,10 +32,7 @@ export class QuestionsController {
 
       res.status(200).json(answers);
     } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ message: "Error al obtener las respuestas de la pregunta" });
+      handleDatabaseError(error, res);
     }
   };
 }
