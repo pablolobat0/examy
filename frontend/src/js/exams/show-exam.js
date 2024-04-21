@@ -48,8 +48,9 @@ const renderAnswer = (answer, cardQuestion) => {
   cardQuestion.querySelector(".form-group").appendChild(answerWrapper);
 };
 
-const renderQuestion = async (question) => {
-  const container = document.querySelector(".row");
+const container = document.querySelector(".row");
+
+const renderQuestion = async (question, answers) => {
   const cardQuestion = document.createElement("div");
   cardQuestion.classList.add("card", "mb-3");
   cardQuestion.innerHTML = `
@@ -59,18 +60,52 @@ const renderQuestion = async (question) => {
           </div>
         </div>`;
 
-  const answers = await getAnswers(question.id);
   answers.forEach((answer) => {
     renderAnswer(answer, cardQuestion);
   });
   container.appendChild(cardQuestion);
 };
 
+const checkAnswers = (correctAnswers) => {
+  const radioButtons = document.querySelectorAll('input[type="radio"]');
+
+  radioButtons.forEach((radioButton) => {
+    const questionIndex = radioButton.getAttribute("name").split("_")[1]; // Obtenemos el índice de la pregunta
+    const selectedAnswer = radioButton.value;
+    const isCorrect = correctAnswers[questionIndex] === selectedAnswer;
+
+    radioButton.parentElement.classList.remove("text-danger");
+    if (isCorrect) {
+      radioButton.parentElement.classList.add("text-success");
+    } else if (radioButton.checked) {
+      radioButton.parentElement.classList.add("text-danger");
+    }
+  });
+};
+
+const renderButtons = async (correctAnswers) => {
+  const checkAnswersButton = document.getElementById("checkAnswersButton");
+
+  checkAnswersButton.onclick = () => {
+    checkAnswers(correctAnswers);
+  };
+};
+
 document.addEventListener("DOMContentLoaded", async () => {
   const urlParams = new URLSearchParams(window.location.search);
   const examId = urlParams.get("examId");
 
+  const correctAnswers = {};
+
   const questions = await getQuestions(examId);
 
-  questions.forEach((question) => renderQuestion(question));
+  questions.forEach(async (question) => {
+    const answers = await getAnswers(question.id);
+    correctAnswers[question.id] = answers.filter(
+      (answer) => answer.correct,
+    )[0].text;
+    renderQuestion(question, answers);
+  });
+
+  renderButtons(correctAnswers);
 });
