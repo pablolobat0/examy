@@ -1,9 +1,9 @@
 import express from "express";
-import cors from "cors";
 
 import { createSubjectsRouter } from "./routes/subjects.js";
 import { createExamsRouter } from "./routes/exams.js";
 import { createQuestionsRouter } from "./routes/questions.js";
+import { corsMiddleware } from "./middlewares/cors.js";
 
 export const createApp = ({
   subjectModel,
@@ -12,7 +12,7 @@ export const createApp = ({
   answerModel,
 }) => {
   const app = express();
-  app.use(cors());
+  app.use(corsMiddleware());
   app.use(express.json());
 
   app.disable("x-powered-by");
@@ -21,7 +21,10 @@ export const createApp = ({
 
   app.use(
     "/subjects",
-    createSubjectsRouter({ subjectModel: subjectModel, examModel: examModel }),
+    createSubjectsRouter({
+      subjectModel: subjectModel,
+      examModel: examModel,
+    }),
   );
   app.use(
     "/exams",
