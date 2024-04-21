@@ -58,28 +58,57 @@
       </nav>
     </header>
     <main>
-      <div class="alert alert-danger d-none" role="alert" id="alert"></div>
-      <form id="createExam">
-        <select
-          class="form-select"
-          id="selectSubject"
-          aria-label="Default select example"
-        ></select>
-        <div class="mb-3">
-          <label for="examName" class="form-label">Exam Name</label>
-          <input
-            type="text"
-            name="examName"
-            class="form-control"
-            id="examName"
-          />
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-center">Crear Examen</h2>
+                <div
+                  class="alert alert-danger d-none"
+                  role="alert"
+                  id="alert"
+                ></div>
+                <form id="createExam">
+                  <div class="mb-3">
+                    <label for="selectSubject" class="form-label"
+                      >Subject</label
+                    >
+                    <select
+                      class="form-select"
+                      id="selectSubject"
+                      aria-label="Select Subject"
+                      required
+                    ></select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="examName" class="form-label"
+                      >Nombre del examen</label
+                    >
+                    <input
+                      type="text"
+                      name="examName"
+                      class="form-control"
+                      id="examName"
+                      required
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label for="fileInput" class="form-label">Archivo</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      id="fileInput"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="fileInput" class="form-label">Archivo:</label>
-          <input type="file" class="form-control" id="fileInput" required />
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+      </div>
     </main>
     <script type="module" src="../src/js/exams/create-exam.js"></script>
     <footer></footer>

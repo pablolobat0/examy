@@ -53,19 +53,38 @@
       </nav>
     </header>
     <main>
-      <div class="alert alert-danger d-none" role="alert" id="alert"></div>
-      <form id="createSubject">
-        <div class="mb-3">
-          <label for="subjectInput" class="form-label">Subject Name</label>
-          <input
-            type="text"
-            name="subjectName"
-            class="form-control"
-            id="subjectInput"
-          />
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-center">Crear Asignatura</h2>
+                <div
+                  class="alert alert-danger d-none"
+                  role="alert"
+                  id="alert"
+                ></div>
+                <form id="createSubject">
+                  <div class="mb-3">
+                    <label for="subjectInput" class="form-label"
+                      >Nombre de la asignatura</label
+                    >
+                    <input
+                      type="text"
+                      name="subjectName"
+                      class="form-control"
+                      id="subjectInput"
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary d-block mx-auto">
+                    Enviar
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
+      </div>
     </main>
     <script type="module" src="../src/js/subjects/create-subject.js"></script>
     <footer></footer>
