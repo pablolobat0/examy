@@ -1,3 +1,5 @@
+import { logError } from "../utils/errorHandling.js";
+
 export default class Modal {
   constructor(modalName) {
     this.saveButton = document.getElementById("saveModal");
@@ -16,12 +18,13 @@ export default class Modal {
   }
 
   onClick(callback) {
-    this.saveButton.onclick = () => {
-      if (!this.name.value) {
-        return;
+    this.saveButton.onclick = async () => {
+      try {
+        await callback(this.object.id, this.name.value);
+        this.modal.hide();
+      } catch (error) {
+        logError(error, "alertModal");
       }
-      callback(this.object.id, this.name.value);
-      this.modal.hide();
     };
   }
 }

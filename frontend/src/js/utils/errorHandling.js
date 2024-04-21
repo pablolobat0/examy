@@ -1,17 +1,17 @@
+import Alert from "../components/alert.js";
+
 const handleResponse = async (response) => {
   if (!response.ok) {
-    return response.json().then((data) => {
-      const errorMessage = data.error || "Failed to fetch data";
-      throw new Error(errorMessage);
-    });
+    const error = await response.json();
+    throw new Error(error.message || "Failed to fetch the data");
   }
   const responseData = await response.json();
   return responseData;
 };
 
-const logError = (error) => {
-  console.error("Error:", error.message);
-  // Puedes agregar lógica adicional, como enviar errores al servidor de registro, etc.
+const logError = (error, alertId) => {
+  const alert = new Alert(alertId);
+  alert.show(error.message);
 };
 
 export { handleResponse, logError };

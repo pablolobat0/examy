@@ -56,6 +56,7 @@
       </nav>
     </header>
     <main>
+      <div class="alert alert-danger d-none" role="alert" id="alert"></div>
       <h1 class="text-center">Exams</h1>
       <div class="container">
         <div class="row"></div>
@@ -70,9 +71,14 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Edit Subject</h5>
+              <h5 class="modal-title">Edit Exam</h5>
             </div>
             <div class="modal-body">
+              <div
+                class="alert alert-danger d-none"
+                role="alert"
+                id="alertModal"
+              ></div>
               <form>
                 <div class="mb-3">
                   <label for="examNameLabel" class="form-label"></label>

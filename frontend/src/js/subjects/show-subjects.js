@@ -3,6 +3,8 @@ import Modal from "../components/modal.js";
 import Subject from "../models/subject.js";
 import { handleResponse, logError } from "../utils/errorHandling.js";
 
+const ALERT_ID = "alert";
+
 const createSubject = async (s) => {
   const subject = new Subject(s.id, s.name);
   const containerRow = document.querySelector(".row");
@@ -16,7 +18,11 @@ const createSubject = async (s) => {
   deleteButton.innerText = "Delete";
   deleteButton.classList.add("btn", "btn-danger");
   deleteButton.onclick = () => {
-    subject.deleteSubject();
+    try {
+      subject.deleteSubject();
+    } catch (error) {
+      logError(error, ALERT_ID);
+    }
   };
   card.element.querySelector(".card").appendChild(deleteButton);
 
@@ -41,7 +47,7 @@ const createSubject = async (s) => {
       const subjectData = await handleResponse(response);
       modalEditSubject.setValues(subjectData);
     } catch (error) {
-      logError(error);
+      logError(error, ALERT_ID);
     }
   };
   card.element.querySelector(".card").appendChild(editButton);
@@ -57,7 +63,7 @@ const getSubjects = async () => {
     const subjects = await handleResponse(response);
     return subjects;
   } catch (error) {
-    logError(error);
+    logError(error, ALERT_ID);
   }
 };
 

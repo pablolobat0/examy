@@ -1,11 +1,17 @@
 import { handleResponse, logError } from "../utils/errorHandling.js";
 
+const ALERT_ID = "alert";
+
 const getSubjects = async () => {
-  const response = await fetch("http://localhost:8000/subjects", {
-    method: "GET",
-  });
-  const subjects = await handleResponse(response);
-  return subjects;
+  try {
+    const response = await fetch("http://localhost:8000/subjects", {
+      method: "GET",
+    });
+    const subjects = await handleResponse(response);
+    return subjects;
+  } catch (error) {
+    logError(error, ALERT_ID);
+  }
 };
 
 const renderSubjects = (subjects) => {
@@ -27,7 +33,7 @@ const createExam = async (formData) => {
     await handleResponse(response);
     window.location.href = "../../../public/index.html";
   } catch (error) {
-    logError(error);
+    logError(error, ALERT_ID);
   }
 };
 

@@ -1,5 +1,7 @@
 import { handleResponse, logError } from "../utils/errorHandling.js";
 
+const ALERT_ID = "alert";
+
 const createSubject = async (name) => {
   try {
     const response = await fetch("http://localhost:8000/subjects", {
@@ -9,10 +11,10 @@ const createSubject = async (name) => {
       },
       body: JSON.stringify({ name }),
     });
-    handleResponse(response);
+    await handleResponse(response);
     window.location.href = "../../../public/index.html";
   } catch (error) {
-    logError(error);
+    logError(error, ALERT_ID);
   }
 };
 

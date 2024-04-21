@@ -3,6 +3,8 @@ import Modal from "../components/modal.js";
 import Exam from "../models/exam.js";
 import { handleResponse, logError } from "../utils/errorHandling.js";
 
+const ALERT_ID = "alert";
+
 const renderExam = (exam) => {
   const modalEditExam = new Modal("modalEditExams");
 
@@ -13,7 +15,11 @@ const renderExam = (exam) => {
   deleteButton.innerText = "Delete";
   deleteButton.classList.add("btn", "btn-danger");
   deleteButton.onclick = () => {
-    exam.deleteExam();
+    try {
+      exam.deleteExam();
+    } catch (error) {
+      logError(error, ALERT_ID);
+    }
   };
   card.element.querySelector(".card").appendChild(deleteButton);
 
@@ -31,7 +37,7 @@ const renderExam = (exam) => {
       const examData = await handleResponse(response);
       modalEditExam.setValues(examData);
     } catch (error) {
-      logError(error);
+      logError(error, ALERT_ID);
     }
   };
 
@@ -52,7 +58,7 @@ const getExams = async (subjectId) => {
     const exams = await handleResponse(response);
     return exams;
   } catch (error) {
-    logError(error);
+    logError(error, ALERT_ID);
   }
 };
 

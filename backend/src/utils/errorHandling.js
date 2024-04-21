@@ -32,6 +32,9 @@ export const handleDatabaseError = (error, res) => {
     default:
       res
         .status(500)
-        .json({ message: "Ha ocurrido un error en la base de datos" });
+        .json({
+          message:
+            "Lo sentimos, se ha producido un error. Por favor, revisa tu conexión a internet e inténtalo de nuevo más tarde.",
+        });
   }
 };
