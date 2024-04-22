@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Empezar Examen</title>
+
+    <meta
+      name="description"
+      content="Empezar un examen personalizado de una asignatura"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#3A3430" />
+
+    <link
+      href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <header class="header">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Test App</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" href="./index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./create_subject.html"
+                  >Crear Asignatura</a
+                >
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="./create_exam.html">Crear Examen</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#"
+                  >Empezar Examen</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-center">Empezar Examen</h2>
+                <div
+                  class="alert alert-danger d-none"
+                  role="alert"
+                  id="alert"
+                ></div>
+                <form id="startExam">
+                  <div class="mb-3">
+                    <label for="selectSubject" class="form-label"
+                      >Subject</label
+                    >
+                    <select
+                      class="form-select"
+                      id="selectSubject"
+                      aria-label="Select Subject"
+                      require
+                    >
+                      <option selected disabled="pass">
+                        Selecciona una asignatura
+                      </option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <input
+                      type="range"
+                      class="form-range"
+                      id="rangeInput"
+                      min="0"
+                      step="1"
+                      value="0"
+                    />
+                    <label for="rangeInput" class="form-label"
+                      >Número de preguntas:
+                      <span id="rangeValue">0</span></label
+                    >
+                  </div>
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="../src/js/exams/start-exam.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <footer></footer>
+  </body>
+</html>

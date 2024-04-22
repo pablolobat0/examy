@@ -4,9 +4,10 @@ import {
 } from "../utils/errorHandling.js";
 
 export class SubjectsController {
-  constructor({ subjectModel, examModel }) {
+  constructor({ subjectModel, examModel, questionModel }) {
     this.subjectModel = subjectModel;
     this.examModel = examModel;
+    this.questionModel = questionModel;
   }
   create = async (req, res) => {
     try {
@@ -56,6 +57,35 @@ export class SubjectsController {
         },
       });
       res.status(200).json(exams);
+    } catch (error) {
+      handleDatabaseError(error, res);
+    }
+  };
+
+  getNumberOfQuestions = async (req, res) => {
+    try {
+      const subjectId = parseInt(req.params.subjectId);
+
+      const subject = await this.subjectModel.findByPk(subjectId);
+      if (!subject) {
+        throw new SubjectNotFoundError("La asignatura especificada no existe");
+      }
+      const exams = await this.examModel.findAll({
+        where: {
+          subjectId: subjectId,
+        },
+      });
+      let questionsNumber = 0;
+
+      for (const exam of exams) {
+        questionsNumber += await this.questionModel.count({
+          where: {
+            examId: exam.id,
+          },
+        });
+      }
+
+      res.status(200).json(questionsNumber);
     } catch (error) {
       handleDatabaseError(error, res);
     }

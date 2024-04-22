@@ -24,6 +24,7 @@ export const createApp = ({
     createSubjectsRouter({
       subjectModel: subjectModel,
       examModel: examModel,
+      questionModel: questionModel,
     }),
   );
   app.use(
