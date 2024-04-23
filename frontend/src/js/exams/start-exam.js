@@ -14,6 +14,25 @@ const getAnswers = async (questionId) => {
   }
 };
 
+const renderResult = (numberOfQuestions, numberOfCorrectAnswers) => {
+  const resultCard = document.createElement("div");
+  resultCard.classList.add("col-md-6", "mb-3");
+  const grade = (numberOfCorrectAnswers * 10) / numberOfQuestions;
+  resultCard.innerHTML = `<div class="card">
+                              <div class="card-body">
+                                <h5 class="card-title text-center">Resultado del examen</h5>
+                                <ul class="list-group list-group-light list-group-small">
+                                    <li class="list-group-item px-3">Preguntas: ${numberOfQuestions}</li>
+                                    <li class="list-group-item px-3">Aciertos: ${numberOfCorrectAnswers}</li>
+                                    <li class="list-group-item px-3">Nota: ${grade.toFixed(2)}</li>
+                                </ul>
+                              </div>
+                         </div>`;
+  const container = document.getElementById("resultContainer");
+  container.append(resultCard);
+  resultCard.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
 const renderAnswer = (answer, cardQuestion) => {
   const answerInput = document.createElement("input");
   answerInput.classList.add("form-check-input");
@@ -33,7 +52,7 @@ const renderAnswer = (answer, cardQuestion) => {
   cardQuestion.querySelector(".form-group").appendChild(answerWrapper);
 };
 
-const container = document.querySelector(".row");
+const container = document.getElementById("examsContainer");
 
 const renderQuestion = async (question, answers) => {
   const cardQuestion = document.createElement("div");
@@ -51,9 +70,9 @@ const renderQuestion = async (question, answers) => {
   container.appendChild(cardQuestion);
 };
 
-const checkAnswers = (correctAnswers) => {
+const checkAnswers = (correctAnswers, numberOfQuestions) => {
   const radioButtons = document.querySelectorAll('input[type="radio"]');
-
+  let numberOfCorrectAnswers = 0;
   radioButtons.forEach((radioButton) => {
     const questionIndex = radioButton.getAttribute("name").split("_")[1]; // Obtenemos el índice de la pregunta
     const selectedAnswer = radioButton.value;
@@ -61,19 +80,24 @@ const checkAnswers = (correctAnswers) => {
 
     radioButton.parentElement.classList.remove("text-danger");
     if (isCorrect) {
+      if (radioButton.checked) {
+        numberOfCorrectAnswers++;
+      }
       radioButton.parentElement.classList.add("text-success");
     } else if (radioButton.checked) {
       radioButton.parentElement.classList.add("text-danger");
     }
   });
+  renderResult(numberOfQuestions, numberOfCorrectAnswers);
 };
 
-const renderButtons = async (correctAnswers) => {
+const renderButtons = async (correctAnswers, numberOfQuestions) => {
   const checkAnswersButton = document.getElementById("checkAnswersButton");
 
   checkAnswersButton.onclick = () => {
-    checkAnswers(correctAnswers);
+    checkAnswers(correctAnswers, numberOfQuestions);
   };
+  checkAnswers.classList.add("d-none");
 };
 
 const getSubjects = async () => {
@@ -149,7 +173,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
       const button = document.getElementById("checkAnswersButton");
       button.classList.remove("d-none");
-      renderButtons(correctAnswers);
+      renderButtons(correctAnswers, rangeInput.value);
     } catch (error) {
       logError(error, ALERT_ID);
     }
