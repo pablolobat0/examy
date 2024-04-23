@@ -22,6 +22,10 @@ export const createSubjectsRouter = ({
     "/:subjectId/exams/questions/count",
     subjectsController.getNumberOfQuestions,
   );
+  subjectsRouter.get(
+    "/:subjectId/exams/questions",
+    subjectsController.getRandomQuestions,
+  );
   subjectsRouter.delete("/:id", subjectsController.deleteSubject);
   subjectsRouter.put("/:id", subjectsController.updateSubject);
   return subjectsRouter;

@@ -9,7 +9,7 @@ const Question = sequelize.define("question", {
     autoIncrement: true,
   },
   statement: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(510),
     allowNull: false,
   },
   examId: {

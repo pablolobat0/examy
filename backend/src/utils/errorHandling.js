@@ -14,6 +14,9 @@ export const QuestionNotFoundError = createErrorFactory(
 export const InvalidExamFormatError = createErrorFactory(
   "InvalidExamFormatError",
 );
+export const InvalidNumberOfQuestionsError = createErrorFactory(
+  "InvalidNumberOfQuestionsError",
+);
 
 export const handleDatabaseError = (error, res) => {
   switch (error.name) {
@@ -26,15 +29,15 @@ export const handleDatabaseError = (error, res) => {
     case "SubjectNotFoundError":
     case "ExamNotFoundError":
     case "QuestionNotFoundError":
+    case "InvalidExamFormatError":
+    case "InvalidNumberOfQuestionsError":
       res.status(404).json({ message: error.message });
       break;
 
     default:
-      res
-        .status(500)
-        .json({
-          message:
-            "Lo sentimos, se ha producido un error. Por favor, revisa tu conexión a internet e inténtalo de nuevo más tarde.",
-        });
+      res.status(500).json({
+        message:
+          "Lo sentimos, se ha producido un error. Por favor, revisa tu conexión a internet e inténtalo de nuevo más tarde.",
+      });
   }
 };

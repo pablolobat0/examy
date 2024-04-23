@@ -109,3 +109,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderButtons(correctAnswers);
 });
+
+export { getAnswers, renderQuestion, renderButtons };

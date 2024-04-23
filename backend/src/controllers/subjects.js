@@ -1,4 +1,6 @@
+import { Op } from "sequelize";
 import {
+  InvalidNumberOfQuestionsError,
   SubjectNotFoundError,
   handleDatabaseError,
 } from "../utils/errorHandling.js";
@@ -86,6 +88,60 @@ export class SubjectsController {
       }
 
       res.status(200).json(questionsNumber);
+    } catch (error) {
+      handleDatabaseError(error, res);
+    }
+  };
+
+  getRandomQuestions = async (req, res) => {
+    try {
+      const subjectId = parseInt(req.params.subjectId);
+
+      const subject = await this.subjectModel.findByPk(subjectId);
+      if (!subject) {
+        throw new SubjectNotFoundError("La asignatura especificada no existe");
+      }
+
+      const numberOfQuestions = req.query.numberOfQuestions;
+
+      const exams = await this.examModel.findAll({
+        where: {
+          subjectId: subjectId,
+        },
+      });
+
+      let questionsIds = [];
+
+      for (const exam of exams) {
+        questionsIds = questionsIds.concat(
+          await this.questionModel.findAll({
+            attributes: ["id"],
+            where: {
+              examId: exam.id,
+            },
+          }),
+        );
+      }
+
+      if (questionsIds.length < numberOfQuestions) {
+        throw new InvalidNumberOfQuestionsError(
+          "El número de preguntas indicado es inválido",
+        );
+      }
+      const questionIdsArray = questionsIds.map((question) => question.id);
+
+      const randomQuestionsIds = [];
+
+      while (randomQuestionsIds.length != numberOfQuestions) {
+        const index = Math.floor(Math.random() * questionIdsArray.length);
+        randomQuestionsIds.push(questionIdsArray.splice(index, 1)[0]);
+      }
+
+      const questions = await this.questionModel.findAll({
+        where: { id: { [Op.or]: randomQuestionsIds } },
+      });
+
+      res.status(200).json(questions);
     } catch (error) {
       handleDatabaseError(error, res);
     }

@@ -9,7 +9,7 @@ const Answer = sequelize.define("answer", {
     autoIncrement: true,
   },
   text: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(510),
     allowNull: false,
   },
   correct: {
