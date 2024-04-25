@@ -1,9 +1,14 @@
 import { Op } from "sequelize";
 import {
   InvalidNumberOfQuestionsError,
-  SubjectNotFoundError,
   handleDatabaseError,
 } from "../utils/errorHandling.js";
+import {
+  getSubjectById,
+  getExamsWithSubjectId,
+} from "../utils/subjectsUtils.js";
+
+import { getExamsQuestionsIds } from "../utils/examsUtils.js";
 
 export class SubjectsController {
   constructor({ subjectModel, examModel, questionModel }) {
@@ -11,6 +16,7 @@ export class SubjectsController {
     this.examModel = examModel;
     this.questionModel = questionModel;
   }
+
   create = async (req, res) => {
     try {
       const { name } = req.body;
@@ -34,12 +40,9 @@ export class SubjectsController {
   getSubject = async (req, res) => {
     try {
       const subjectId = parseInt(req.params.id);
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (subject) {
-        res.status(200).json(subject);
-      } else {
-        throw new SubjectNotFoundError("La asignatura especificada no existe");
-      }
+      const subject = await getSubjectById(this.subjectModel, subjectId);
+
+      res.status(200).json(subject);
     } catch (error) {
       handleDatabaseError(error, res);
     }
@@ -48,16 +51,9 @@ export class SubjectsController {
   getSubjectExams = async (req, res) => {
     try {
       const subjectId = parseInt(req.params.subjectId);
+      await getSubjectById(this.subjectModel, subjectId);
 
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (!subject) {
-        throw new SubjectNotFoundError("La asignatura especificada no existe");
-      }
-      const exams = await this.examModel.findAll({
-        where: {
-          subjectId: subjectId,
-        },
-      });
+      const exams = await getExamsWithSubjectId(this.examModel, subjectId);
       res.status(200).json(exams);
     } catch (error) {
       handleDatabaseError(error, res);
@@ -67,16 +63,10 @@ export class SubjectsController {
   getNumberOfQuestions = async (req, res) => {
     try {
       const subjectId = parseInt(req.params.subjectId);
+      await getSubjectById(this.subjectModel, subjectId);
 
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (!subject) {
-        throw new SubjectNotFoundError("La asignatura especificada no existe");
-      }
-      const exams = await this.examModel.findAll({
-        where: {
-          subjectId: subjectId,
-        },
-      });
+      const exams = await getExamsWithSubjectId(this.examModel, subjectId);
+
       let questionsNumber = 0;
 
       for (const exam of exams) {
@@ -96,22 +86,14 @@ export class SubjectsController {
   getRandomQuestions = async (req, res) => {
     try {
       const subjectId = parseInt(req.params.subjectId);
-
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (!subject) {
-        throw new SubjectNotFoundError("La asignatura especificada no existe");
-      }
+      await getSubjectById(this.subjectModel, subjectId);
 
       const numberOfQuestions = req.query.numberOfQuestions;
 
-      const exams = await this.examModel.findAll({
-        where: {
-          subjectId: subjectId,
-        },
-      });
+      const exams = await getExamsWithSubjectId(this.examModel, subjectId);
 
-      let questionsIds = [];
-
+      // Obtenemos un array de con todos los IDs de las preguntas
+      let questionsIds = getExamsQuestionsIds(this.questionModel, exams);
       for (const exam of exams) {
         questionsIds = questionsIds.concat(
           await this.questionModel.findAll({
@@ -128,10 +110,11 @@ export class SubjectsController {
           "El número de preguntas indicado es inválido",
         );
       }
+
+      // Extraemos el id de la pregunta
       const questionIdsArray = questionsIds.map((question) => question.id);
-
       const randomQuestionsIds = [];
-
+      // Cada vez que se obtiene un id aleatorio se quita del array
       while (randomQuestionsIds.length != numberOfQuestions) {
         const index = Math.floor(Math.random() * questionIdsArray.length);
         randomQuestionsIds.push(questionIdsArray.splice(index, 1)[0]);
@@ -150,13 +133,10 @@ export class SubjectsController {
   deleteSubject = async (req, res) => {
     try {
       const subjectId = parseInt(req.params.id);
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (subject) {
-        await subject.destroy();
-        res.status(200).json({ message: "Asignatura borrada con éxito" });
-      } else {
-        throw new SubjectNotFoundError("La asignatura especificada no existe");
-      }
+      const subject = await getSubjectById(this.subjectModel, subjectId);
+
+      await subject.destroy();
+      res.status(200).json({ message: "Asignatura borrada con éxito" });
     } catch (error) {
       handleDatabaseError(error, res);
     }
@@ -167,10 +147,7 @@ export class SubjectsController {
       const subjectId = parseInt(req.params.id);
       const { name } = req.body;
 
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (!subject) {
-        throw new SubjectNotFoundError("La asignatura especificada no existe");
-      }
+      const subject = await getSubjectById(this.subjectModel, subjectId);
 
       subject.name = name;
       await subject.save();

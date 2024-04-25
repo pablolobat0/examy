@@ -1,10 +1,10 @@
 import fs from "fs";
 import {
-  ExamNotFoundError,
   InvalidExamFormatError,
-  SubjectNotFoundError,
   handleDatabaseError,
 } from "../utils/errorHandling.js";
+import { getSubjectById } from "../utils/subjectsUtils.js";
+import { getExamById } from "../utils/examsUtils.js";
 
 export class ExamsController {
   constructor({ examModel, subjectModel, questionModel, answerModel }) {
@@ -19,10 +19,7 @@ export class ExamsController {
       const { name, subjectId } = req.body;
       const filePath = req.file.path;
 
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (!subject) {
-        throw new SubjectNotFoundError("La asignatura especificada no existe.");
-      }
+      await getSubjectById(this.subjectModel, subjectId);
 
       const newExam = await this.examModel.create({
         name: name,
@@ -37,47 +34,40 @@ export class ExamsController {
     }
   };
 
-  processFileData = (filePath, examId) => {
-    return new Promise((resolve, reject) => {
-      fs.readFile(filePath, "utf8", (err, data) => {
-        if (err) {
-          reject(new Error("Error al leer el fichero"));
-          return;
-        }
+  processFileData = async (filePath, examId) => {
+    fs.readFile(filePath, "utf8", (err, data) => {
+      if (err) {
+        throw new Error("Error al leer el fichero");
+      }
 
-        let jsonData;
-        try {
-          jsonData = JSON.parse(data);
-          jsonData.questions.forEach(async (questionData) => {
-            const question = await this.questionModel.create({
-              statement: questionData.text,
-              examId: examId,
-            });
+      let jsonData;
+      try {
+        jsonData = JSON.parse(data);
+        jsonData.questions.forEach(async (questionData) => {
+          const question = await this.questionModel.create({
+            statement: questionData.text,
+            examId: examId,
+          });
 
-            questionData.options.forEach(async (optionData) => {
-              await this.answerModel.create({
-                text: optionData.text,
-                correct: optionData.correct,
-                questionId: question.id,
-              });
+          questionData.options.forEach(async (optionData) => {
+            await this.answerModel.create({
+              text: optionData.text,
+              correct: optionData.correct,
+              questionId: question.id,
             });
           });
-          resolve();
-        } catch (error) {
-          reject(new InvalidExamFormatError("Formato de examen inválido"));
-        }
-      });
+        });
+      } catch (error) {
+        throw new InvalidExamFormatError("Formato de examen inválido");
+      }
     });
   };
 
   getExamsBySubjectId = async (req, res) => {
     try {
       const subjectId = parseInt(req.params.subjectId);
+      await getSubjectById(this.subjectModel, subjectId);
 
-      const subject = await this.subjectModel.findByPk(subjectId);
-      if (!subject) {
-        throw new SubjectNotFoundError("La asignatura especificada no existe.");
-      }
       const exams = await this.examModel.findAll({
         where: {
           subjectId: subjectId,
@@ -92,8 +82,7 @@ export class ExamsController {
   getExam = async (req, res) => {
     try {
       const examId = parseInt(req.params.examId);
-
-      const exam = await this.examModel.findByPk(examId);
+      const exam = await getExamById(this.examModel, examId);
       res.status(200).json(exam);
     } catch (error) {
       handleDatabaseError(error, res);
@@ -103,11 +92,7 @@ export class ExamsController {
   deleteExam = async (req, res) => {
     try {
       const examId = parseInt(req.params.examId);
-
-      const exam = await this.examModel.findByPk(examId);
-      if (!exam) {
-        throw new ExamNotFoundError("El examen especificado no existe");
-      }
+      const exam = await getExamById(this.examModel, examId);
       await exam.destroy();
       res
         .status(200)
@@ -121,10 +106,8 @@ export class ExamsController {
     try {
       const examId = parseInt(req.params.examId);
       const { name } = req.body;
-      const exam = await this.examModel.findByPk(examId);
-      if (!exam) {
-        throw new ExamNotFoundError("El examen especificado no existe");
-      }
+      const exam = await getExamById(this.examModel, examId);
+
       exam.name = name;
       await exam.save();
       res
@@ -138,10 +121,8 @@ export class ExamsController {
   getExamQuestions = async (req, res) => {
     try {
       const examId = parseInt(req.params.examId);
-      const exam = await this.examModel.findByPk(examId);
-      if (!exam) {
-        throw new ExamNotFoundError("El examen especificado no existe");
-      }
+      await getExamById(this.examModel, examId);
+
       const questions = await this.questionModel.findAll({
         where: {
           examId: examId,
