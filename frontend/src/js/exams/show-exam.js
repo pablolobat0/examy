@@ -42,7 +42,7 @@ const renderAnswer = (answer, cardQuestion) => {
 
   const answerWrapper = document.createElement("div");
   answerWrapper.classList.add("form-check");
-  answerWrapper.appendChild(answerInput);
+  answerLabel.appendChild(answerInput);
   answerWrapper.appendChild(answerLabel);
 
   cardQuestion.querySelector(".form-group").appendChild(answerWrapper);
@@ -109,5 +109,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderButtons(correctAnswers);
 });
-
-export { getAnswers, renderQuestion, renderButtons };

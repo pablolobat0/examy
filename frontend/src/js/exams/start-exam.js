@@ -1,6 +1,7 @@
 import { handleResponse, logError } from "../utils/errorHandling.js";
 
 const ALERT_ID = "alert";
+
 const getAnswers = async (questionId) => {
   try {
     const response = await fetch(
@@ -14,7 +15,37 @@ const getAnswers = async (questionId) => {
   }
 };
 
-const renderResult = (numberOfQuestions, numberOfCorrectAnswers) => {
+const renderButtons = async (correctAnswers, numberOfQuestions) => {
+  const checkAnswersButton = document.createElement("button");
+  checkAnswersButton.classList.add("btn", "btn-primary");
+  checkAnswersButton.innerText = "Comprobar respuestas";
+
+  checkAnswersButton.onclick = () => {
+    checkAnswers(correctAnswers, numberOfQuestions);
+    checkAnswersButton.remove();
+  };
+
+  const checkAnswersButtonContainer = document.getElementById(
+    "checkAnswersButtonContainer",
+  );
+
+  checkAnswersButtonContainer.appendChild(checkAnswersButton);
+};
+
+const uncheckAnswers = () => {
+  const radioButtons = document.querySelectorAll('input[type="radio"]');
+  radioButtons.forEach((radioButton) => {
+    radioButton.checked = false;
+    radioButton.parentElement.classList.remove("text-danger");
+    radioButton.parentElement.classList.remove("text-success");
+  });
+};
+
+const renderResult = (
+  numberOfQuestions,
+  numberOfCorrectAnswers,
+  correctAnswers,
+) => {
   const resultCard = document.createElement("div");
   resultCard.classList.add("col-md-6", "mb-3");
   const grade = (numberOfCorrectAnswers * 10) / numberOfQuestions;
@@ -28,6 +59,23 @@ const renderResult = (numberOfQuestions, numberOfCorrectAnswers) => {
                                 </ul>
                               </div>
                          </div>`;
+
+  const repeatExamButton = document.createElement("button");
+  repeatExamButton.classList.add("btn", "btn-primary", "mt-3", "me-2");
+  repeatExamButton.onclick = () => {
+    uncheckAnswers();
+    resultCard.remove();
+    renderButtons(correctAnswers, numberOfQuestions);
+  };
+  repeatExamButton.innerText = "Repetir examen";
+
+  const otherExamButton = document.createElement("button");
+  otherExamButton.classList.add("btn", "btn-primary", "mt-3", "ms-2");
+  otherExamButton.onclick = () => location.reload();
+  otherExamButton.innerText = "Hacer otro examen";
+
+  resultCard.querySelector(".card-body").appendChild(repeatExamButton);
+  resultCard.querySelector(".card-body").appendChild(otherExamButton);
   const container = document.getElementById("resultContainer");
   container.append(resultCard);
   resultCard.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -46,7 +94,7 @@ const renderAnswer = (answer, cardQuestion) => {
 
   const answerWrapper = document.createElement("div");
   answerWrapper.classList.add("form-check");
-  answerWrapper.appendChild(answerInput);
+  answerLabel.appendChild(answerInput);
   answerWrapper.appendChild(answerLabel);
 
   cardQuestion.querySelector(".form-group").appendChild(answerWrapper);
@@ -70,7 +118,7 @@ const renderQuestion = async (question, answers) => {
   container.appendChild(cardQuestion);
 };
 
-const checkAnswers = (correctAnswers, numberOfQuestions) => {
+function checkAnswers(correctAnswers, numberOfQuestions) {
   const radioButtons = document.querySelectorAll('input[type="radio"]');
   let numberOfCorrectAnswers = 0;
   radioButtons.forEach((radioButton) => {
@@ -88,17 +136,8 @@ const checkAnswers = (correctAnswers, numberOfQuestions) => {
       radioButton.parentElement.classList.add("text-danger");
     }
   });
-  renderResult(numberOfQuestions, numberOfCorrectAnswers);
-};
-
-const renderButtons = async (correctAnswers, numberOfQuestions) => {
-  const checkAnswersButton = document.getElementById("checkAnswersButton");
-
-  checkAnswersButton.onclick = () => {
-    checkAnswers(correctAnswers, numberOfQuestions);
-  };
-  checkAnswers.classList.add("d-none");
-};
+  renderResult(numberOfQuestions, numberOfCorrectAnswers, correctAnswers);
+}
 
 const getSubjects = async () => {
   try {
@@ -171,8 +210,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         )[0].text;
         renderQuestion(question, answers);
       });
-      const button = document.getElementById("checkAnswersButton");
-      button.classList.remove("d-none");
       renderButtons(correctAnswers, rangeInput.value);
     } catch (error) {
       logError(error, ALERT_ID);
