@@ -93,17 +93,7 @@ export class SubjectsController {
       const exams = await getExamsWithSubjectId(this.examModel, subjectId);
 
       // Obtenemos un array de con todos los IDs de las preguntas
-      let questionsIds = getExamsQuestionsIds(this.questionModel, exams);
-      for (const exam of exams) {
-        questionsIds = questionsIds.concat(
-          await this.questionModel.findAll({
-            attributes: ["id"],
-            where: {
-              examId: exam.id,
-            },
-          }),
-        );
-      }
+      let questionsIds = await getExamsQuestionsIds(this.questionModel, exams);
 
       if (questionsIds.length < numberOfQuestions) {
         throw new InvalidNumberOfQuestionsError(
@@ -113,6 +103,7 @@ export class SubjectsController {
 
       // Extraemos el id de la pregunta
       const questionIdsArray = questionsIds.map((question) => question.id);
+      console.log(questionIdsArray);
       const randomQuestionsIds = [];
       // Cada vez que se obtiene un id aleatorio se quita del array
       while (randomQuestionsIds.length != numberOfQuestions) {
