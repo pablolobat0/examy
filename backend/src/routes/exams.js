@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ExamsController } from "../controllers/exams.js";
 import multer from "multer";
+import path from "path";
 
 export const createExamsRouter = ({
   examModel,
@@ -9,8 +10,17 @@ export const createExamsRouter = ({
   answerModel,
 }) => {
   const examsRouter = Router();
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "/tmp");
+    },
+    filename: function (req, file, cb) {
+      const ext = path.extname(file.originalname);
+      cb(null, Date.now() + ext);
+    },
+  });
 
-  const upload = multer({ dest: "uploads/" });
+  const upload = multer({ storage: storage });
 
   const examsController = new ExamsController({
     examModel: examModel,

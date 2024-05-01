@@ -1,10 +1,6 @@
-import fs from "fs";
-import {
-  InvalidExamFormatError,
-  handleDatabaseError,
-} from "../utils/errorHandling.js";
+import { handleDatabaseError } from "../utils/errorHandling.js";
 import { getSubjectById } from "../utils/subjectsUtils.js";
-import { getExamById } from "../utils/examsUtils.js";
+import { getExamById, processFile } from "../utils/examsUtils.js";
 
 export class ExamsController {
   constructor({ examModel, subjectModel, questionModel, answerModel }) {
@@ -15,52 +11,33 @@ export class ExamsController {
   }
 
   create = async (req, res) => {
-    try {
-      const { name, subjectId } = req.body;
-      const filePath = req.file.path;
+    const { name, subjectId } = req.body;
+    const filePath = req.file.path;
 
-      await getSubjectById(this.subjectModel, subjectId);
+    await getSubjectById(this.subjectModel, subjectId);
 
-      const newExam = await this.examModel.create({
-        name: name,
-        subjectId: subjectId,
-      });
-
-      await this.processFileData(filePath, newExam.id);
-
-      res.status(201).json(newExam);
-    } catch (error) {
-      handleDatabaseError(error, res);
-    }
-  };
-
-  processFileData = async (filePath, examId) => {
-    fs.readFile(filePath, "utf8", (err, data) => {
-      if (err) {
-        throw new Error("Error al leer el fichero");
-      }
-
-      let jsonData;
-      try {
-        jsonData = JSON.parse(data);
-        jsonData.questions.forEach(async (questionData) => {
-          const question = await this.questionModel.create({
-            statement: questionData.text,
-            examId: examId,
-          });
-
-          questionData.options.forEach(async (optionData) => {
-            await this.answerModel.create({
-              text: optionData.text,
-              correct: optionData.correct,
-              questionId: question.id,
-            });
-          });
-        });
-      } catch (error) {
-        throw new InvalidExamFormatError("Formato de examen inválido");
-      }
+    const newExam = await this.examModel.create({
+      name: name,
+      subjectId: subjectId,
     });
+
+    const questions = await processFile(filePath);
+
+    for (const q of questions) {
+      const question = await this.questionModel.create({
+        statement: q.statement,
+        examId: newExam.id,
+      });
+      for (const answer of q.answers) {
+        await this.answerModel.create({
+          text: answer.text,
+          correct: answer.correct,
+          questionId: question.id,
+        });
+      }
+    }
+
+    res.status(201).json(newExam);
   };
 
   getExamsBySubjectId = async (req, res) => {
